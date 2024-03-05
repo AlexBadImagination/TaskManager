@@ -5,15 +5,16 @@ using Task_manager.entity;
 
 namespace Task_manager
 {
-    public partial class AddTask : Form
+    public partial class AddTaskForm : Form
     {
         private string Name;
         private string Description;
         private DateTime Deadline;
         private Status Status;
+        private int Priority;
         private Form1 Form1;
         
-        public AddTask(Form1 form1)
+        public AddTaskForm(Form1 form1)
         {
             InitializeComponent();
             Form1 = form1;
@@ -22,7 +23,7 @@ namespace Task_manager
 
             foreach (object obj in valArray)
             {
-                taskStatusListBox.Items.Add(obj);
+                taskStatusComboBox.Items.Add(obj);
             }
         }
 
@@ -41,15 +42,22 @@ namespace Task_manager
             Deadline = taskDeadlineTimeDatePicker.Value;
         }
 
-        private void taskStatusListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void taskStatusComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Status = (Status)taskStatusListBox.SelectedItem;
+            Status = (Status)taskStatusComboBox.SelectedItem;
+        }
+
+        private void taskPriorityComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Priority = (int)taskPriorityComboBox.SelectedItem;
         }
 
         private void addTaskButton_Click(object sender, EventArgs e)
         {
-            Task task = new Task(Name, Description, Deadline, Status);
+            Task task = new Task(Name, Description, Deadline, Status, Priority);
             Form1.Tasks.Add(task);
+            Console.Out.WriteLine(Form1.Tasks.Count);
+            Form1.DisplayTasks();
             this.Close();
         }
     }
