@@ -46,6 +46,7 @@
         <Reference Include="System.Xml"/>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="entity\Action.cs" />
         <Compile Include="entity\Status.cs" />
         <Compile Include="entity\Task.cs" />
         <Compile Include="forms\AddTaskForm.cs">
@@ -53,6 +54,12 @@
         </Compile>
         <Compile Include="forms\AddTaskForm.Designer.cs">
           <DependentUpon>AddTaskForm.cs</DependentUpon>
+        </Compile>
+        <Compile Include="forms\DialogForm.cs">
+          <SubType>Form</SubType>
+        </Compile>
+        <Compile Include="forms\DialogForm.Designer.cs">
+          <DependentUpon>DialogForm.cs</DependentUpon>
         </Compile>
         <Compile Include="forms\ShowTaskForm.cs">
           <SubType>Form</SubType>
@@ -70,6 +77,9 @@
         <Compile Include="Properties\AssemblyInfo.cs"/>
         <EmbeddedResource Include="forms\AddTaskForm.resx">
           <DependentUpon>AddTaskForm.cs</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Include="forms\DialogForm.resx">
+          <DependentUpon>DialogForm.cs</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Include="forms\ShowTaskForm.resx">
           <DependentUpon>ShowTaskForm.cs</DependentUpon>

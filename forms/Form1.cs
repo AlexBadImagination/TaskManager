@@ -1,34 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+using System.Data;
 using System.Windows.Forms;
 using Task_manager.entity;
+using Task = Task_manager.entity.Task;
 
-namespace Task_manager
+namespace Task_manager.forms
 {
     public partial class Form1 : Form
     {
         public List<Task> Tasks { get; set; }
         public Form1()
         {
-            Tasks = new List<Task>();
-            
-            Tasks.Add(new Task("Зробити практичну", "Написати програму", new DateTime(2024, 3, 5), Status.Заплановано, 5));
+            Tasks = new List<Task> {new Task("Зробити практичну", "Написати програму", new DateTime(2024, 3, 5), Status.Заплановано, 5)};
+
             InitializeComponent();
         }
 
-        private void addTaskButtonClick(object sender, EventArgs e)
+        private void AddTaskButtonClick(object sender, EventArgs e)
         {
             AddTaskForm newForm = new AddTaskForm(this);
             newForm.Show();
         }
 
-        private void editTaskButton_Click(object sender, EventArgs e)
+        private void EditTask(Task task)
         {
-            ShowTaskForm newForm = new ShowTaskForm(this);
+            ShowTaskForm newForm = new ShowTaskForm(this, task);
             newForm.Show();
-            
         }
 
         public void DisplayTasks()
@@ -36,9 +34,9 @@ namespace Task_manager
             tasksDataGrid.Rows.Clear();
             foreach (Task task in Tasks)
             {
-                string[] row =
+                object[] row =
                 {
-                    task.Name, task.Priority.ToString(), task.Deadline.ToString(), task.Status.ToString()
+                    task.Id, task.Name, task.Priority, task.Deadline, task.Status
                 };
                 tasksDataGrid.Rows.Add(row);
             }
@@ -47,27 +45,37 @@ namespace Task_manager
         private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             // Ignore clicks that are not on button cells. 
-            if (e.RowIndex < 0 || e.ColumnIndex !=
-                tasksDataGrid.Columns["Status Request"].Index) return;
+            if (e.RowIndex < 0 || e.ColumnIndex != tasksDataGrid.Columns["Status Request"].Index) return;
 
             // Retrieve the task ID.
-            Int32 taskID = (Int32)tasksDataGrid[0, e.RowIndex].Value;
+            // Вывести в таблицу ID, чтобы брать его и искать
+            int taskId = (int)tasksDataGrid[0, e.RowIndex].Value;
 
             // Retrieve the Employee object from the "Assigned To" cell.
-            /*Employee assignedTo = tasksDataGrid.Rows[e.RowIndex]
-                .Cells["Assigned To"].Value as Employee;
+            Task task = Tasks.Find(tempTask => tempTask.Id == taskId);
             
 
             // Request status through the Employee object if present. 
-            if (assignedTo != null)
+            if (task != null)
             {
-                assignedTo.RequestStatus(taskID);
+                EditTask(task);
             }
             else
             {
-                MessageBox.Show(String.Format(
-                    "Task {0} is unassigned.", taskID), "Status Request");
-            }*/
+                MessageBox.Show("Немає завдання з таким ID", "Неправильне ID");
+            }
+        }
+        
+        private void filterTextBox_TextChanged(object sender, EventArgs e)
+        {
+            (tasksDataGrid.DataSource as DataTable).DefaultView.RowFilter =
+                String.Format("Name like '{0}%'", filterTextBox.Text);
+            DisplayTasks();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            //throw new System.NotImplementedException();
         }
     }
 }

@@ -1,23 +1,20 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 using Task_manager.entity;
+using Action = Task_manager.entity.Action;
 
-namespace Task_manager
+namespace Task_manager.forms
 {
     public partial class AddTaskForm : Form
     {
-        private string Name;
-        private string Description;
-        private DateTime Deadline;
-        private Status Status;
-        private int Priority;
-        private Form1 Form1;
+        private readonly Task _task;
+        private readonly Form1 _form1;
         
         public AddTaskForm(Form1 form1)
         {
             InitializeComponent();
-            Form1 = form1;
+            _form1 = form1;
+            _task = new Task();
             
             Array valArray = typeof(Status).GetEnumValues();
 
@@ -29,36 +26,50 @@ namespace Task_manager
 
         private void taskNameTextBox_TextChanged(object sender, EventArgs e)
         {
-            Name = taskNameTextBox.Text;
+            _task.Name = taskNameTextBox.Text;
         }
 
         private void taskDescriptionTextBox_TextChanged(object sender, EventArgs e)
         {
-            Description = taskDescriptionTextBox.Text;
+            _task.Description = taskDescriptionTextBox.Text;
         }
 
-        private void taskDeadlineTimeDatePicker_ValueChanged(object sender, EventArgs e)
+        private void taskDeadlineDatePicker_ValueChanged(object sender, EventArgs e)
         {
-            Deadline = taskDeadlineTimeDatePicker.Value;
+            _task.Deadline = taskDeadlineDatePicker.Value;
         }
+
+        /*private void taskDeadlineTimePicker_ValueChanged(object sender, EventArgs e)
+        {
+            _task.Deadline = taskDeadlineTimePicker.Value;
+        }*/
 
         private void taskStatusComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Status = (Status)taskStatusComboBox.SelectedItem;
+            _task.Status = (Status)taskStatusComboBox.SelectedItem;
         }
 
         private void taskPriorityComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Priority = (int)taskPriorityComboBox.SelectedItem;
+            _task.Priority = (int)taskPriorityComboBox.SelectedItem;
         }
 
         private void addTaskButton_Click(object sender, EventArgs e)
         {
-            Task task = new Task(Name, Description, Deadline, Status, Priority);
-            Form1.Tasks.Add(task);
-            Console.Out.WriteLine(Form1.Tasks.Count);
-            Form1.DisplayTasks();
+            _form1.Tasks.Add(_task);
+            Console.Out.WriteLine(_form1.Tasks.Count);
+            _form1.DisplayTasks();
             this.Close();
+        }
+
+        private void showAllTasksButton_Click(object sender, EventArgs e)
+        {
+            DialogForm dialog = new DialogForm(Action.ReturnToMainForm);
+            DialogResult dr = dialog.ShowDialog(this);
+            if (dr == DialogResult.Yes)
+            {
+                this.Close();
+            }
         }
     }
 }
