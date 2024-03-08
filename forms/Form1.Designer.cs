@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Data;
+using System.Windows.Forms;
 using Task_manager.entity;
 
 namespace Task_manager.forms
@@ -114,13 +116,15 @@ namespace Task_manager.forms
 
         private System.Windows.Forms.TextBox filterTextBox;
 
+        private DataTable dataTable;
+
         // Налаштуємо таблицю, де будуть відображатись завдання
         private void SetupDataGripView()
         {
             this.Controls.Add(tasksDataGrid);
 
             //Встановимо параметри таблиці даних
-            tasksDataGrid.ColumnCount = 5;
+            //tasksDataGrid.ColumnCount = 5;
             this.tasksDataGrid.Name = "tasksDataGrid";
             this.tasksDataGrid.Location = new System.Drawing.Point(8, 37);
             this.tasksDataGrid.Margin = new System.Windows.Forms.Padding(2);
@@ -135,35 +139,92 @@ namespace Task_manager.forms
             this.Controls.Add(tasksDataGrid);
             
             //Підпишемо колонки для виведення даних
-            this.tasksDataGrid.Columns[0].Name = "ID";
+            /*this.tasksDataGrid.Columns[0].Name = "ID";
             this.tasksDataGrid.Columns[1].Name = "Назва";
             this.tasksDataGrid.Columns[2].Name = "Пріорітет";
             this.tasksDataGrid.Columns[3].Name = "Дедлайн";
-            this.tasksDataGrid.Columns[4].Name = "Статус";
+            this.tasksDataGrid.Columns[4].Name = "Статус";*/
+            
+            dataTable = new DataTable();
+            // Create new DataColumn, set DataType,
+            // ColumnName and add to DataTable.
+            
+            DataColumn column;
+            DataRow row;
+            
+            column = new DataColumn();
+            column.DataType = System.Type.GetType(typeof(int).ToString());
+            column.ColumnName = "ID";
+            column.ReadOnly = true;
+            //column.AutoIncrement = true;
+            //column.Unique = true;
+            // Add the Column to the DataColumnCollection.
+            dataTable.Columns.Add(column);
+            
+            column = new DataColumn();
+            column.DataType = System.Type.GetType(typeof(string).ToString());
+            column.ColumnName = "Назва";
+            column.ReadOnly = true;
+            // Add the Column to the DataColumnCollection.
+            dataTable.Columns.Add(column);
+            
+            column = new DataColumn();
+            column.DataType = System.Type.GetType(typeof(int).ToString());
+            column.ColumnName = "Пріорітет";
+            column.ReadOnly = true;
+            // Add the Column to the DataColumnCollection.
+            dataTable.Columns.Add(column);
+
+            column = new DataColumn();
+            column.DataType = System.Type.GetType(typeof(DateTime).ToString());
+            column.ColumnName = "Дедлайн";
+            column.ReadOnly = true;
+            // Add the Column to the DataColumnCollection.
+            dataTable.Columns.Add(column);
+            
+            column = new DataColumn();
+            column.DataType = System.Type.GetType(typeof(Status).ToString());
+            column.ColumnName = "Статус";
+            column.ReadOnly = true;
+            // Add the Column to the DataColumnCollection.
+            dataTable.Columns.Add(column);
+            
+
+            
+            // Make the ID column the primary key column.
+            DataColumn[] PrimaryKeyColumns = new DataColumn[1];
+            PrimaryKeyColumns[0] = dataTable.Columns["ID"];
+            dataTable.PrimaryKey = PrimaryKeyColumns;
+            
+            //Підв'яжемо данні про завданняя, що будуть відображатись у таблиці 
+            foreach (Task task in Tasks)
+            {
+                row = dataTable.NewRow();
+                row["ID"] = task.Id;
+                row["Назва"] = task.Name;
+                row["Пріорітет"] = task.Priority;
+                row["Дедлайн"] = task.Deadline;
+                row["Статус"] = task.Status;
+                dataTable.Rows.Add(row);
+            }
+            
+            tasksDataGrid.DataSource = dataTable;
             
             //Додаємо колонку з кнопками для редагування завдання
             DataGridViewButtonColumn buttonColumn = 
                 new DataGridViewButtonColumn();
             //buttonColumn.HeaderText = "Редагувати завдання"; // Устанавливаем заголовок колонки с кнопками
-            buttonColumn.Name = "Status Request";
-            buttonColumn.Text = "Редагувати";
+            buttonColumn.Name = "";
+            buttonColumn.Text = "Переглянути";
             buttonColumn.UseColumnTextForButtonValue = true;
             tasksDataGrid.Columns.Add(buttonColumn);
-            
-            //Підв'яжемо данні про завданняя, що будуть відображатись у таблиці 
-            foreach (Task task in Tasks)
-            {
-                object[] row =
-                {
-                    task.Id, task.Name, task.Priority, task.Deadline, task.Status
-                };
-                this.tasksDataGrid.Rows.Add(row);
-            }
             
             // Add a CellClick handler to handle clicks in the button column.
             tasksDataGrid.CellClick +=
                 new DataGridViewCellEventHandler(dataGridView_CellClick);
         }
+        
+        
 
         private System.Windows.Forms.DataGridView tasksDataGrid;
 

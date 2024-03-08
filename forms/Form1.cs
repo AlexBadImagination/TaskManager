@@ -31,25 +31,29 @@ namespace Task_manager.forms
 
         public void DisplayTasks()
         {
-            tasksDataGrid.Rows.Clear();
+            dataTable.Clear();
             foreach (Task task in Tasks)
             {
-                object[] row =
-                {
-                    task.Id, task.Name, task.Priority, task.Deadline, task.Status
-                };
-                tasksDataGrid.Rows.Add(row);
+                DataRow row;
+                row = dataTable.NewRow();
+                row["ID"] = task.Id;
+                row["Назва"] = task.Name;
+                row["Пріорітет"] = task.Priority;
+                row["Дедлайн"] = task.Deadline;
+                row["Статус"] = task.Status;
+                dataTable.Rows.Add(row);
             }
+            tasksDataGrid.DataSource = dataTable;
         }
 
         private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             // Ignore clicks that are not on button cells. 
-            if (e.RowIndex < 0 || e.ColumnIndex != tasksDataGrid.Columns["Status Request"].Index) return;
+            if (e.RowIndex < 0 || e.ColumnIndex != tasksDataGrid.Columns[""].Index) return;
 
             // Retrieve the task ID.
             // Вывести в таблицу ID, чтобы брать его и искать
-            int taskId = (int)tasksDataGrid[0, e.RowIndex].Value;
+            /*Int32 taskId = (Int32)tasksDataGrid.DataSource[0, e.RowIndex].Value;
 
             // Retrieve the Employee object from the "Assigned To" cell.
             Task task = Tasks.Find(tempTask => tempTask.Id == taskId);
@@ -63,14 +67,14 @@ namespace Task_manager.forms
             else
             {
                 MessageBox.Show("Немає завдання з таким ID", "Неправильне ID");
-            }
+            }*/
         }
         
         private void filterTextBox_TextChanged(object sender, EventArgs e)
         {
-            (tasksDataGrid.DataSource as DataTable).DefaultView.RowFilter =
+            ((DataTable) tasksDataGrid.DataSource).DefaultView.RowFilter =
                 String.Format("Name like '{0}%'", filterTextBox.Text);
-            DisplayTasks();
+            //DisplayTasks();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
